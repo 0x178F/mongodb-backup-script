@@ -26,6 +26,9 @@ db_connections=(
 # Current date and time
 date_time=$(date +"%Y%m%d%H%M%S")
 
+# parallel run
+parallel_backup=true
+
 #backup deletion time
 delete_period=30 # 30 days
 
@@ -51,10 +54,12 @@ for connection in "${db_connections[@]}"; do
   # Create a backup directory for the database
   mkdir -p "$backup_folder/$db_name"
 
-  # Perform the backup
-  mongodump_output=$(mongodump --uri "$connection" --out "$backup_folder/$db_name/$date_time" 2>&1)
 
-  # Check if mongodump command was successful
+# Perform backup in parallel if $parallel_backup is set to "true", otherwise it performs backup sequentially
+if [ "$parallel_backup" = "true" ]; then
+  (mongodump --uri "$connection" --out "$backup_folder/$db_name/$date_time" && echo "Database backup operation completed successfully: $db_name" >> "$log_file" || echo "Error occurred: $db_name" >> "$log_file") &
+else
+  mongodump --uri "$connection" --out "$backup_folder/$db_name/$date_time"
   if [ $? -ne 0 ]; then
     # Print error message to log file
     echo "Error in database backup operation: $mongodump_output" >> "$log_file"
@@ -63,7 +68,13 @@ for connection in "${db_connections[@]}"; do
     # Print success message to log file
     echo "Database backup operation completed successfully: $db_name" >> "$log_file"
   fi
+fi
 done
+
+# Wait for all parallel tasks to finish
+if [ "$parallel_backup" = "true" ]; then
+  wait
+fi
 
 # Print message to log file
 echo "Database backup process finished." >> "$log_file"

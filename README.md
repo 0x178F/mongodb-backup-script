@@ -12,6 +12,7 @@ A MongoDB connection string is required for each database that you want to back 
 - The _delete_period_ variable determines how long backups should be kept before being deleted. The default is 30 days.
 - The _backup_folder_ variable determines where the backups will be stored. The default is a folder called "backups".
 - The _log_file_ variable determines the location of the log file, which will contain information about the backup process.
+- The _parallel_backup_ variable determines whether the backup is started in parallel.
 
 ## Usage
 
@@ -42,6 +43,7 @@ db_connections=(
 - The script will create a new folder for each database that is backed up, inside the backup_folder. The name of the folder will be the same as the name of the database.
 - The backups are created with the current date and time as the name, in the format YYYYMMDDHHMMSS.
 - The script will delete files and empty directories older than the number of days specified in _delete_period_. This is to keep the _backup_folder_ from filling up with old backups.
+- Optionally, parallel execution support for faster backup completion.
 
 ## Note
 
