@@ -43,8 +43,8 @@ if [ ! -f "$log_file" ]; then
 fi
 
 # Print message to log file
-echo "Başlangıç zamanı: $(date)" >> "$log_file"
-echo "Veritabanı yedekleme işlemi başlatıldı." >> "$log_file"
+echo "Start time: $(date)" >> "$log_file"
+echo "Database backup process started." >> "$log_file"
 
 # Loop through each connection string
 for connection in "${db_connections[@]}"; do
